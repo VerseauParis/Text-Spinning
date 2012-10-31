@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby
+# -*- encoding: utf-8 -*-
+#
+#::BEGIN::
+# USAGE
+#
+#  text-spinning <file>
+#
+# DESCRIPTION
+#  Generate all possible version of a spinning file.  Phrases set starts by '{'
+#  and ends by '}'.  Set elements are separated by '|'.  You can nest phrases
+#  set.
+#::END::
+#
+
+Encoding.default_internal = 'utf-8' if RUBY_VERSION =~ /^1\.9/
+
+$: << File.expand_path(File.dirname(__FILE__) + '/../lib')
+require 'text_spinning'
+
+# Print the message in the header of this file.
+def usage
+  found_begin = false
+  found_end = false
+  File.open($0) do |io|
+    io.each_line do |line|
+      if line =~ /^#::BEGIN::/
+        found_begin = true
+        next
+      end
+      if line =~ /^#::END::/
+        found_end = true
+        break
+      end
+      print line.sub(/^# ?/, '') if found_begin
+    end
+  end
+  unless found_begin and found_end
+    STDERR.print("FATAL: cannot find usage message in '#'")
+    Kernel.exit(51)
+  end
+end
+
+# =========== #
+# Entry point #
+# =========== #
+
+if ARGV.size.zero?
+  usage
+  exit 1
+end
+
+text_spinning = TextSpinning.new
+tree = text_spinning.parse(IO.read(ARGV.shift))
+versions = text_spinning.versions(tree)
+versions.each_with_index do |v, i|
+  puts "=== Version #{i} ===================================================="
+  puts v
+end
+puts "#{versions.size} version generated."
