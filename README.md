@@ -1,4 +1,4 @@
-Text-Spininng
+Text-Spinning
 =============
 
 A text spinning generator.
