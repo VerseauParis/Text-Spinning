@@ -10,6 +10,8 @@ class Array
   #   [['1'],['1','2']].permutations            #=> ["11", "12"]
   #   [['1','2'],['1','2']].permutations        #=> ["11", "12", "21", "22"]
   def permutations
+    # FIXME(Nicolas Despres): See if we could use the built-in
+    # Array.permutation here.
     return [] if self.empty?
     x = self.first
     y = self[1..self.size-1].permutations
